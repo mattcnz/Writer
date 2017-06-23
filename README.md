@@ -17,10 +17,15 @@ You can add libraries/add books to libraries from the admin panel.
 # Flaws
 
 -The New Book form should probably use django’s forms to validate it’s data.
+
 -The book_viewer page runs the autosave function once every minute, even when nothing as changed. This doesn’t need to happen.
+
 -Inconsistent variable naming standards.
--The user needs to find sufficient motivation to actually write something in the first place, in order to be motivated by the threat of losing their hard work. 
+
+-The user needs to find sufficient motivation to actually write something in the first place, in order to be motivated by the threat of losing their hard work.
+
 -Someone could just view source and copy from there. 
+
 -User could change javascript variables to cheat. These should be hidden in an external script. 
 
 # Merits
