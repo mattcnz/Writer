@@ -20,7 +20,7 @@ from books import views
 from django.conf.urls.static import static
 import Writer2.settings as settings
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
+    
 urlpatterns = [
     url(r'^login/$', auth_views.login, name='login',
         kwargs={'redirect_authenticated_user': True}),

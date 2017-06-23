@@ -43,7 +43,7 @@ class Library(models.Model):
 
 	name = models.TextField(default="New Library")
 
-	books = models.ManyToManyField(Book, related_name="libraries")
+	books = models.ManyToManyField(Book, related_name="libraries", blank=True)
 
 
 	def __str__(self):

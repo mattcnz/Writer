@@ -5,8 +5,7 @@
 
 <html>
 <head>
-    <!-
-- include libraries(jQuery, bootstrap) -->
+
 
 <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script> 
@@ -76,6 +75,14 @@
 
 </head>
 
+
+
+
+
+
+
+
+
   <body>
 
     <div id="wrapper">
@@ -104,6 +111,12 @@
         </div>
 
     </div>
+
+
+
+
+
+
 
 
 
@@ -152,7 +165,7 @@ jQuery(function ($) {
 
 
 
-//Check on progress on every change. Probably not very efficient.
+//Check on progress on every change (if the book isn't completed/out of time). Probably not very efficient.
 if(isFinished==false & out_of_time==false){
   $('#summernote').on('summernote.change', function(we, contents, $editable) {
     var text = $('#summernote').summernote('code');
@@ -171,7 +184,7 @@ if(isFinished==false & out_of_time==false){
   });
 }
 
-//Rename things if book is finished. I need to move all this junk to a seperate file.
+//Rename things if book is finished. I need to move all this junk to a seperate file. Called on page load. 
 if(isFinished==true){
     $('#goal_timeperiod').text("Finished");
     $('#timeleft').text("Finished");
@@ -179,7 +192,7 @@ if(isFinished==true){
 
 }
 
-//Check if the book is finished (count>goal)
+//Funcion to check if the book is finished (count>goal)
 function checkFinished(length, bookLength){
 
   if(length<bookLength){
@@ -196,6 +209,7 @@ function checkFinished(length, bookLength){
 };
 
 
+//Posts data via ajax and updates the "last autosave" field
 function post_via_ajax(path, params, method, formName) {
 
     method = method || "post"; // Set method to post by default if not specified.

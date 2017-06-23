@@ -6,11 +6,11 @@
 	<body>
 
 
-	<table style="width:50%">
+	<table style="width:55%" border=1 frame=hsides rules="rows-columns">
 	  <tr>
-	    <th>Library</th>
-	    <th>Book</th> 
-	    <th>User</th>
+	    <th align="left">Library</th>
+	    <th align="left">Book</th> 
+	    <th align="left">User</th>
 	  </tr>
 
 	  {%for book in books.all%}
@@ -19,11 +19,11 @@
 	    <td>{%for lib in book.libraries.all%} 
 
 	    		
-	    		{{ lib.name }}
+	    		- {{ lib.name }}
 
     		{%endfor%}
     		{%if not book.libraries.all%}
-    		This book isn't in a library
+    		<i>- This book isn't in a library</i>
     		{%endif%}
 
 
