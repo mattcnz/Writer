@@ -1,7 +1,9 @@
 # Writer
 
 clone repository
+
 create virtualenv
+
 pip install -r requirements
 
 and you should be good to go. Comes with a sqlite db, superuser: admin pw: greenapple, users: tony, paulie - password: greenapple (for both)
