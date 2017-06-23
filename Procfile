@@ -1,0 +1,1 @@
+web: python manage.py collectstatic --noinput; gunicorn Writer2.wsgi:application --log-file -

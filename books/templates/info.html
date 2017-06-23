@@ -1,0 +1,44 @@
+<html>
+	<head>
+
+	</head>
+
+	<body>
+
+
+	<table style="width:50%">
+	  <tr>
+	    <th>Library</th>
+	    <th>Book</th> 
+	    <th>User</th>
+	  </tr>
+
+	  {%for book in books.all%}
+
+	  <tr>
+	    <td>{%for lib in book.libraries.all%} 
+
+	    		
+	    		{{ lib.name }}
+
+    		{%endfor%}
+    		{%if not book.libraries.all%}
+    		This book isn't in a library
+    		{%endif%}
+
+
+	    </td>
+	    <td>{{book.title}}</td>
+	    <td>{{book.author}}</td>
+	  </tr>
+
+	  {%endfor%}
+
+	</table>
+	
+	<p>User Count: {{users.count}}</p>
+	<p>Book Count: {{books.count}}</p>
+	<p>Library Count: {{libraries.count}}</p>
+
+	</body>
+

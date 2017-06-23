@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block content %}
+
+<html>
+<head>
+    <!-
+- include libraries(jQuery, bootstrap) -->
+
+<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script> 
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
+
+<!-- include summernote css/js-->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.3/summernote.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.3/summernote.js"></script>
+
+    <style>
+          #toolbar {
+
+            border: 1px solid #e5e5e5;
+            width: 50%;
+            margin: 20px auto;
+            box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+            color: black;
+        }
+
+        #editor {
+
+            width: 80%;
+            margin: 20px auto;
+            box-shadow: 2px 1px 5px rgba(0,0,0,0.2);
+            border: 1px solid #e5e5e5;
+            height: 80%;
+        }
+
+        .modal-backdrop.in {
+            z-index: auto;
+        }
+
+        body {
+
+            background-image: url("https://i.imgur.com/DaPgOkS.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: 0% 0%; 
+            font-family: 'Asap', sans-serif;
+        }
+
+        .note-editing-area {
+
+          font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+
+        #stats{
+
+          margin-bottom: 20px;
+        }
+
+        #wrapper{
+
+          display:none;
+          }
+
+      </style>
+
+
+    <script>
+
+     $(document).ready(function(){
+        $('#wrapper').fadeIn(800);
+    });
+
+    </script>
+
+</head>
+
+  <body>
+
+    <div id="wrapper">
+
+
+  
+
+      <div class="container" id="stats">
+
+        <div class="row">
+          <div class="col-md-3" id="demo"> </div>
+          <div class="col-md-2" id="wordcount">Wordcount: </div>
+          <div class="col-md-3" id="goal">Target: {{book.goal}} total, {{book.wordsPerPeriod}} per period</div>
+          <div class="col-md-2" id="last_save">Last Save: </div>
+          <div class="col-md-2" id="timeleft_in_period"></div>
+          <div class="col-md-2" id="goal_timeperiod">Next target: {{book.wordsPerPeriod}}</div>
+        </div>
+      </div>
+
+      <body oncopy="return false" oncut="return false" onpaste="return false">
+
+        <div class="container">
+
+          <div id="summernote">{{book.content|safe}}</div>
+
+        </div>
+
+    </div>
+
+
+
+
+<!-- Probably should be in an external file-->
+<script>
+{% if book.is_finished == True %}
+  var isFinished = true
+{% else %}
+  var isFinished = false
+{% endif %}
+{% if book.out_of_time == True %}
+  var out_of_time = true
+{% else %}
+  var out_of_time = false
+{% endif %}
+
+
+//Setup Summernote
+$(document).ready(function() {
+  $('#summernote').summernote({disableResizeEditor: true, height: '75vh'});
+  var text = $('#summernote').summernote('code');
+  var length = text.split(' ').length;
+  $('#wordcount').text("Wordcount: " + length);
+});
+
+//called on page load
+jQuery(function ($) {
+    
+    var time_in_secs = {{seconds}},
+        display = $('#demo');
+    {% if book.is_finished == True and book.out_of_time == False %}
+    makeCopyable()
+    {% elif book.editable == True%}
+    startTimer(time_in_secs, display);
+
+    $('#timeleft_in_period').text("{{timeleft_in_period}}");
+    startTimerPeriod({{timeleft_in_period}}, $('#timeleft_in_period'));
+    {% else %}
+    $('#demo').text("Out of Time!");
+
+    {% endif %}
+});
+
+
+
+
+
+//Check on progress on every change. Probably not very efficient.
+if(isFinished==false & out_of_time==false){
+  $('#summernote').on('summernote.change', function(we, contents, $editable) {
+    var text = $('#summernote').summernote('code');
+    var length = text.split(' ').length;
+    
+    $('#wordcount').text("Wordcount: " + length);
+
+    if(length>={{book.goal}}){
+      
+      makeCopyable();
+      submitFunctionFinished(); 
+
+    }
+
+
+  });
+}
+
+//Rename things if book is finished. I need to move all this junk to a seperate file.
+if(isFinished==true){
+    $('#goal_timeperiod').text("Finished");
+    $('#timeleft').text("Finished");
+    $('#demo').text("Finished");
+
+}
+
+//Check if the book is finished (count>goal)
+function checkFinished(length, bookLength){
+
+  if(length<bookLength){
+
+    return false;
+    console.Log("Not finished");
+
+  }
+  else{
+    return true;
+    console.Log("finished");
+  }
+
+};
+
+
+function post_via_ajax(path, params, method, formName) {
+
+    method = method || "post"; // Set method to post by default if not specified.
+    
+    var form = document.createElement("form");
+
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+    form.setAttribute("id", formName);
+
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    };
+
+    document.body.appendChild(form);
+
+    $("#submitForm").submit( function(event){
+      event.preventDefault();
+      $.ajax({
+        url : path, // the endpoint
+        type : "POST", // http method
+        data : params, // data sent with the post request
+
+        // handle a successful response
+        success : function(json) {
+
+            
+            $('#last_save').text("Last Save: " + new Date().toTimeString().split(" ")[0]);
+
+        },
+
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            
+            console.log(xhr.status + ": " + xhr.responseText);
+            $('#last_save').text("Error Saving"); // provide a bit more info about the error to the console
+        }
+    });
+      });
+    
+    $("#submitForm").submit();
+    $("#submitForm").remove();
+    
+
+}
+
+
+function post(path, params, method, formName) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+    form.setAttribute("id", formName);
+
+
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    };
+
+    document.body.appendChild(form);
+
+    form.submit();
+
+}
+
+
+//Timer for whole thing
+function startTimer(duration, display) {
+    var timer = duration, minutes, seconds, days;
+    var countdown = setInterval(function () {
+        minutes = parseInt(timer/60 % 60, 10);
+        seconds = parseInt(timer % 60, 10);
+        hours = parseInt(timer / 3600, 10);
+        days = parseInt(hours / 24, 10);
+        hours = parseInt(timer / 3600 % 24, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.text("Time left total " + days + 'D:' + hours + ':' + minutes + ":" + seconds);
+
+        if(seconds==0){
+          submitFunction();
+          //Save every minute
+        }
+
+        if (--timer < 0) {
+            timer = duration;
+            clearInterval(countdown);
+            
+              var text = $('#summernote').summernote('code');
+              var length = text.split(' ').length;
+
+              bookLength = {{book.goal}};
+              if(checkFinished(length, bookLength) & out_of_time == false){
+                  
+                  isFinished = true;
+                  submitFunctionFinished(); 
+                  makeCopyable();
+                  
+              }
+              else{
+                outOfTime();
+                
+
+              }
+            
+        }
+
+    }, 1000);
+}
+
+
+var words_per_period_current = {{book.wordsPerPeriod}};
+var words_per_period = {{book.wordsPerPeriod}};
+
+
+//Timer for timeperiods
+function startTimerPeriod(duration, display) {
+    var timer = duration, minutes, seconds, hours;
+    var countdown = setInterval(function () {
+        minutes = parseInt(timer/60 % 60, 10);
+        seconds = parseInt(timer % 60, 10);
+        hours = parseInt(timer / 3600, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.text("Time left period " + hours + ':' + minutes + ":" + seconds);
+
+
+        if (--timer < 0) {
+            duration = {{book.timePeriod}}
+            timer = duration;
+            //clearInterval(countdown);
+            
+            
+              var text = $('#summernote').summernote('code');
+              var length = text.split(' ').length;
+
+              bookLength = {{book.goal}};
+              if(checkFinished(length, words_per_period_current) & out_of_time == false){
+
+                  window.alert('Goal Reached for this time period! You can keep going, or you can stop - you won\'t lose the time left in this timeperiod for finishing early');
+                  
+              }
+
+              else{
+                outOfTime();
+                
+                
+
+              }
+
+            words_per_period_current = words_per_period + words_per_period_current;
+            $('#goal_timeperiod').text("Next target " + words_per_period_current);
+            
+        }
+
+    }, 1000);
+}
+
+//Called every minute to autosave the book. Or when the user clicks save. 
+function submitFunction(){
+
+  var text = $('#summernote').summernote('code');
+  post_via_ajax('/save_ajax/{{id}}/',  {saving: 'true', id : {{id}}, writing : text, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, "post", "submitForm");
+  
+
+}
+
+//Called on finish (when the user reaches their goal)
+function submitFunctionFinished(){
+
+  var text = $('#summernote').summernote('code');
+  post('/book_viewer/{{id}}/',  {saving: 'true', id : {{id}}, writing : text, 'csrfmiddlewaretoken': '{{ csrf_token }}', finished : 'true'}, "post", "finisheForm");
+  window.alert("Finished! You can now export via copy/paste.");
+
+}
+
+//Called when time runs out.
+function outOfTime(){
+
+  post('/out_of_time/{{id}}/', {id: {{id}}, 'csrfmiddlewaretoken': '{{ csrf_token }}'}, "post", "outOfTimeForm")
+
+}
+
+//Make the book copyable
+function makeCopyable(){
+  document.body.oncopy = function() { return true; }
+  document.body.oncut = function() { return true; }
+  document.body.onpaste = function() { return true; }
+}
+
+
+</script>
+ 
+{% endblock %}
+</body>
+
+</html>

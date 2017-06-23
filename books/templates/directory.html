@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+{% extends "base.html" %} 
+
+{% block content %}
+
+<html>
+<head>
+
+    <!-- include libraries(jQuery, bootstrap) -->
+<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script> 
+<script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script> 
+
+<!-- include summernote css/js-->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.3/summernote.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.3/summernote.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Asap" rel="stylesheet">
+
+ <script>
+
+ $(document).ready(function(){
+    $('#wrapper').fadeIn(1100);
+});
+
+</script>
+ 
+<style>
+    #jumbotron {
+      border-radius: 0;
+      padding-top: 10px;
+      background-color: transparent;
+      
+
+    }
+    
+    body {
+      background-image: url("https://i.imgur.com/DaPgOkS.jpg");
+    background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: 0% 0%; 
+      font-family: 'Asap', sans-serif;
+   }
+
+   #wrapper{
+    display:none;
+}
+
+    #tutorial{
+      padding:;
+      background-clip:content-box;
+      
+      font-size: 16px;
+
+    }
+
+    .col-md-2  {
+      padding: 20px;  
+      padding-bottom: 20px;
+      
+
+
+    }
+
+
+
+    .row{
+      padding-bottom: 20px;
+      font-size: 20px;
+    }
+
+    h2 {
+      font-size: 40px;
+      margin-bottom: 20px;
+    }
+
+    #glyph {
+      font-size: 50px;
+    }
+
+    #colour_this {
+      
+      padding-left: 50px;
+      padding-right: 50px;
+    }
+
+
+  </style>
+
+
+
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+  <div class="container text-center">
+    <div class="jumbotron" id="jumbotron">
+      <h2><b>Welcome {{ user.username}}!</b></h2>
+
+
+      <p>Chasing Your Tale is a tool for writers who can start, but need a bit more motivation to finish.</p>
+      <p>If you don't write consistently, <i>all your progress is deleted.</i></p>
+      <p1>Access your books in progress from the taskbar, or create a new one</p1>
+      
+
+
+      </div>
+    </div>
+
+    
+  <div class="container text-center" id="tutorial">
+    <h2>How It Works</h2>
+      <div class="row">
+        <div class="col-md-3 col-md-offset-1">
+          <div class="row">
+            <a href="# " data-toggle="modal" data-target="#myModal"> <span class="glyphicon glyphicon-plus" id="glyph"></span></a>
+          </div>
+          <div class="row">
+            It's easy! To create a book, select <i>New Book</i> from the books menu in the top right, or click the plus.
+          </div>
+        </div>
+        <div class="col-md-4" id="colour_this">
+          <div class="row">
+            <span class="glyphicon glyphicon-time" id="glyph"></span>
+          </div>
+          <div class="row">
+            Decide how many words you want to write, and how many you want to write per time period. For example, 2000 words total, 500 every time period, where a time period is 24 hours.
+          </div>
+          </div>
+        <div class="col-md-3">
+          <div class="row">
+          <span class="glyphicon glyphicon-pencil" id="glyph"></span>
+          </div>
+          <div class="row">
+            Hit create. You need to reach your word goal in the time allotted, or your book will be deleted. When you finish, you'll be free to 
+            export your work.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+
+
+ </div>
+
+ {% endblock %}
+
+
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,129 @@
+{% load i18n static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+ <link href="https://fonts.googleapis.com/css?family=Asap" rel="stylesheet">
+<style>
+
+
+    body {
+      
+      font-family: 'Asap', sans-serif;
+
+   }
+
+
+</style>
+</head>
+{% load i18n %}
+
+<body>
+
+      <nav class="navbar navbar-default navbar-static-top" role="navigation" id=mynavbar>
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#not-google-plus-nav">
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Chasing Your Tale</a>
+        </div> <!-- ./navbar-header -->
+
+        <div class="collapse navbar-collapse" id="not-google-plus-nav">
+          <ul class="nav navbar-nav pull-right">
+            {% if user.is_authenticated %}
+              <li><a href="#">Hi {{ user.username }}!</a></li>
+
+              {% if '/book_viewer' in request.get_full_path %}
+              <li><a href="javascript:submitFunction()">Save Progress</a></li>
+              {% endif %} 
+              
+              <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Books
+              <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+              {%for book in user.books.all%}
+                <li><a href="{% url 'book_viewer' book.id %}"> {{book.title|safe}}</a><li>
+              {%endfor%}
+                <li ><a href="# " data-toggle="modal" data-target="#myModal"> + New Book</a><li>
+                
+              </ul>
+            </li>
+            <li><a href="{% url 'logout' %}?next=/login">Logout</a></li>
+            {% else %}
+              <li><a href="/login">Login</a></li>
+              <li><a href="#">Register</a></li>
+
+            {% endif %}
+              
+
+
+          </ul>
+        </div> <!-- /.collapse.navbar-collapse -->
+      </div> <!-- /.container-fluid -->
+    </nav>
+
+   <div class="container">
+  <!-- Trigger the modal with a button -->
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Create a New Book</h4>
+        </div>
+        <div class="modal-body">
+          <form role="form" action='/new_book_bs/' method='POST'>
+            <div class="form-group">
+              <label for="bookname">Title</label>
+              <input type="text" class="form-control" id="book_name" name="book_name" placeholder="Enter Title" required>
+            </div>
+            <div class="form-group">
+                    <label for="words_req">ie. 500 means you have to complete 500 words every time period</label>
+                     <input type="number" class="form-control" id="words_req" name="words_req" placeholder="Words Per Time Period" required>
+              </div>
+              <div class="form-group">
+                    <label for="words_total">When you reach this many words, you can export your work</label>
+                     <input type="number" class="form-control" id="words_total" name="words_total" placeholder="Wordcount Goal" required>
+              </div>
+              <div class="form-group">
+              <div class ="form-group">
+              <label for="hours">Time period (ie. 0 Hrs 30 Mins means you have 30 minutes to write your designated number of words before deletion </label>
+                <input type="number" class="form-control" id="hours" name="hours" placeholder="Hours" required>
+              </div>
+
+              <div class="form-group">
+                     <input type="number" class="form-control" id="minutes" name="minutes" placeholder="Minutes" required>
+              </div>
+
+
+              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}" />
+            </div>
+            
+
+            <div class="form-group">
+            
+              <button type="submit" class="btn btn-success btn-block"><span class="glyphicon glyphicon-plus"></span> Create Book</button>
+
+              </div>
+          </form>
+        </div>
+
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
+ 
+
+    {% block content %}{% endblock content %}
+
+</body>
+</html>
