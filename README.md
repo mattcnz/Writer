@@ -14,7 +14,7 @@ The Library class is something of an afterthought. Book objects can be added to 
 
 You can add libraries/add books to libraries from the admin panel. 
 
-#Flaws
+# Flaws
 
 -The New Book form should probably use django’s forms to validate it’s data.
 -The book_viewer page runs the autosave function once every minute, even when nothing as changed. This doesn’t need to happen.
@@ -23,7 +23,7 @@ You can add libraries/add books to libraries from the admin panel.
 -Someone could just view source and copy from there. 
 -User could change javascript variables to cheat. These should be hidden in an external script. 
 
-#Merits
+# Merits
 
 Conceptually intriguing.
 
